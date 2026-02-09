@@ -14,10 +14,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const optTrams = document.getElementById("opt-trams");
   const optIndoor = document.getElementById("opt-indoor");
   const routeResults = document.getElementById("route-results");
-  const hotelInfo = document.getElementById("hotel-info");
   const stripMap = document.getElementById("strip-map");
   const tabBtns = document.querySelectorAll(".tab-btn");
   const tabPanels = document.querySelectorAll(".tab-panel");
+
+  // Initialize interactive Leaflet map
+  const interactiveMap = new StripMap("leaflet-map", STRIP_DATA, pathfinder);
+  stripMapInstance = interactiveMap;
 
   // Populate dropdowns with hotels sorted north to south
   const sortedHotels = [...STRIP_DATA.hotels]
@@ -90,6 +93,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     renderRoute(route);
     highlightRouteOnMap(route);
+
+    // Show route on interactive map
+    interactiveMap.showRoute(route);
+
+    // Switch to interactive map tab and scroll to it
+    document.querySelector('[data-tab="tab-interactive-map"]').click();
   });
 
   function renderRoute(route) {
@@ -154,6 +163,11 @@ document.addEventListener("DOMContentLoaded", () => {
       tabPanels.forEach((p) => p.classList.remove("active"));
       btn.classList.add("active");
       document.getElementById(btn.dataset.tab).classList.add("active");
+
+      // Leaflet needs a resize when its container becomes visible
+      if (btn.dataset.tab === "tab-interactive-map") {
+        setTimeout(() => interactiveMap.invalidateSize(), 100);
+      }
     });
   });
 
@@ -243,7 +257,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function highlightRouteOnMap(route) {
-    // Clear previous highlights
+    // Clear previous highlights on text layout
     document.querySelectorAll(".map-hotel").forEach((el) => {
       el.classList.remove("route-highlight", "route-start", "route-end");
     });
@@ -262,14 +276,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const toEl = document.querySelector(`[data-id="${step.to}"]`);
       if (fromEl) fromEl.classList.add("route-highlight");
       if (toEl) toEl.classList.add("route-highlight");
-    }
-
-    // Scroll to the map tab
-    document.querySelector('[data-tab="tab-map"]').click();
-
-    // Scroll the start hotel into view
-    if (startEl) {
-      startEl.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   }
 

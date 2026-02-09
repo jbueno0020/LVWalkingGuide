@@ -377,7 +377,280 @@ body {
   display: block;
 }
 
-/* === Strip Map === */
+/* === Interactive Leaflet Map === */
+#leaflet-map {
+  width: 100%;
+  height: 600px;
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+  overflow: hidden;
+}
+
+/* Dark popup styling */
+.dark-popup .leaflet-popup-content-wrapper {
+  background: var(--dark-mid);
+  color: var(--text);
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+.dark-popup .leaflet-popup-tip {
+  background: var(--dark-mid);
+  border: 1px solid var(--gold);
+  border-top: none;
+  border-left: none;
+}
+
+.dark-popup .leaflet-popup-close-button {
+  color: var(--text-muted);
+}
+
+.dark-popup .leaflet-popup-close-button:hover {
+  color: var(--gold);
+}
+
+.map-popup h4 {
+  color: var(--gold);
+  margin-bottom: 0.4rem;
+  font-size: 1rem;
+}
+
+.map-popup .popup-desc {
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
+  color: var(--text);
+}
+
+.map-popup .popup-meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.map-popup .popup-section {
+  margin-top: 0.4rem;
+  font-size: 0.85rem;
+}
+
+.map-popup .popup-section ul {
+  list-style: none;
+  padding-left: 0.5rem;
+  margin-top: 0.2rem;
+}
+
+.map-popup .popup-section li::before {
+  content: "\2192 ";
+  color: var(--indoor-color);
+}
+
+.map-popup .popup-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--card-border);
+}
+
+.map-popup .popup-actions button {
+  flex: 1;
+  background: var(--dark-light);
+  border: 1px solid var(--card-border);
+  color: var(--gold);
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.map-popup .popup-actions button:hover {
+  background: var(--gold);
+  color: var(--dark);
+}
+
+/* Hotel tooltips */
+.hotel-tooltip {
+  background: var(--dark-mid) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--card-border) !important;
+  border-radius: 4px !important;
+  padding: 2px 8px !important;
+  font-size: 0.8rem !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+.hotel-tooltip::before {
+  border-right-color: var(--card-border) !important;
+}
+
+.connection-tooltip,
+.route-tooltip {
+  background: var(--dark-mid) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--card-border) !important;
+  border-radius: 4px !important;
+  font-size: 0.8rem !important;
+}
+
+/* Map legend */
+.map-legend {
+  background: var(--dark-mid);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 0.8rem;
+  color: var(--text);
+  font-size: 0.8rem;
+  line-height: 1.6;
+  max-width: 180px;
+}
+
+.map-legend h4 {
+  color: var(--gold);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.3rem;
+  margin-top: 0.4rem;
+}
+
+.map-legend h4:first-child {
+  margin-top: 0;
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.1rem 0;
+}
+
+.legend-line {
+  display: inline-block;
+  width: 20px;
+  height: 3px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.legend-line.dashed {
+  background: repeating-linear-gradient(
+    90deg,
+    currentColor 0,
+    currentColor 6px,
+    transparent 6px,
+    transparent 10px
+  );
+  height: 3px;
+}
+
+.legend-line.dashed-short {
+  background: repeating-linear-gradient(
+    90deg,
+    currentColor 0,
+    currentColor 3px,
+    transparent 3px,
+    transparent 7px
+  );
+  height: 3px;
+}
+
+.legend-line.dashed-long {
+  background: repeating-linear-gradient(
+    90deg,
+    currentColor 0,
+    currentColor 8px,
+    transparent 8px,
+    transparent 12px
+  );
+  height: 3px;
+}
+
+.legend-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  flex-shrink: 0;
+}
+
+/* Step number markers on route */
+.step-number-marker {
+  background: none !important;
+  border: none !important;
+}
+
+.step-num {
+  width: 24px;
+  height: 24px;
+  background: var(--dark);
+  color: var(--gold);
+  border: 2px solid var(--gold);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Route endpoint labels */
+.route-endpoint-marker {
+  background: none !important;
+  border: none !important;
+}
+
+.endpoint {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.start-marker {
+  background: var(--green);
+  color: white;
+}
+
+.end-marker {
+  background: var(--accent);
+  color: white;
+}
+
+/* Hotel map marker base */
+.hotel-map-marker {
+  background: none !important;
+  border: none !important;
+}
+
+/* Leaflet controls on dark theme */
+.leaflet-control-zoom a {
+  background: var(--dark-mid) !important;
+  color: var(--text) !important;
+  border-color: var(--card-border) !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background: var(--dark-light) !important;
+  color: var(--gold) !important;
+}
+
+.leaflet-control-attribution {
+  background: rgba(13, 13, 26, 0.8) !important;
+  color: var(--text-muted) !important;
+  font-size: 0.65rem !important;
+}
+
+.leaflet-control-attribution a {
+  color: var(--text-muted) !important;
+}
+
+/* === Strip Map (text layout) === */
 .map-zone {
   margin-bottom: 1.5rem;
 }
@@ -650,6 +923,16 @@ body {
   .route-options {
     flex-direction: column;
     gap: 0.5rem;
+  }
+
+  #leaflet-map {
+    height: 450px;
+  }
+
+  .map-legend {
+    max-width: 140px;
+    padding: 0.5rem;
+    font-size: 0.7rem;
   }
 
   .map-hotel.west {
