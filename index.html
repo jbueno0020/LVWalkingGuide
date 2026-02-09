@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Las Vegas Strip Walking Guide</title>
+  <meta name="description" content="Interactive walking guide for the Las Vegas Strip. Find the best route between hotels using indoor walkways, pedestrian bridges, free trams, and the monorail.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <h1>Las Vegas Strip Walking Guide</h1>
+    <p>Navigate the Strip on foot &mdash; hotel to hotel, the smart way</p>
+  </header>
+
+  <main class="container">
+
+    <!-- Route Finder -->
+    <section class="route-finder">
+      <h2>Find Your Route</h2>
+
+      <div class="route-inputs">
+        <div class="input-group">
+          <label for="from-select">Starting Point</label>
+          <select id="from-select"></select>
+        </div>
+
+        <button class="swap-btn" id="swap-btn" title="Swap start and destination">&lrhar;</button>
+
+        <div class="input-group">
+          <label for="to-select">Destination</label>
+          <select id="to-select"></select>
+        </div>
+      </div>
+
+      <div class="route-options">
+        <label>
+          <input type="checkbox" id="opt-monorail" checked>
+          Use Monorail ($5/ride)
+        </label>
+        <label>
+          <input type="checkbox" id="opt-trams" checked>
+          Use Free Trams
+        </label>
+        <label>
+          <input type="checkbox" id="opt-indoor" >
+          Prefer Indoor Routes
+        </label>
+      </div>
+
+      <button class="find-btn" id="find-route-btn">Find Best Route</button>
+
+      <div id="route-results"></div>
+    </section>
+
+    <!-- Tabbed Content -->
+    <section class="tabs">
+      <nav class="tab-nav">
+        <button class="tab-btn active" data-tab="tab-map">Strip Map</button>
+        <button class="tab-btn" data-tab="tab-transit">Transit Guide</button>
+        <button class="tab-btn" data-tab="tab-tips">Walking Tips</button>
+      </nav>
+
+      <div class="tab-panel active" id="tab-map">
+        <div id="strip-map"></div>
+      </div>
+
+      <div class="tab-panel" id="tab-transit"></div>
+
+      <div class="tab-panel" id="tab-tips"></div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>Las Vegas Strip Walking Guide &mdash; Making the Strip walkable, one route at a time.</p>
+    <p>Information is approximate and subject to change. Always verify hours and availability on-site.</p>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/pathfinder.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>

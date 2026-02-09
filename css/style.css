@@ -1,0 +1,672 @@
+/* === Las Vegas Strip Walking Guide === */
+
+:root {
+  --gold: #c8a84e;
+  --gold-light: #f5e6b8;
+  --dark: #1a1a2e;
+  --dark-mid: #16213e;
+  --dark-light: #0f3460;
+  --accent: #e94560;
+  --green: #27ae60;
+  --blue: #2980b9;
+  --tram-color: #8e44ad;
+  --bridge-color: #e67e22;
+  --indoor-color: #27ae60;
+  --sidewalk-color: #7f8c8d;
+  --monorail-color: #2980b9;
+  --text: #e0e0e0;
+  --text-muted: #999;
+  --bg: #0d0d1a;
+  --card-bg: #1a1a2e;
+  --card-border: #2a2a4a;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* === Header === */
+.site-header {
+  background: linear-gradient(135deg, var(--dark) 0%, var(--dark-mid) 100%);
+  border-bottom: 2px solid var(--gold);
+  padding: 1.5rem 1rem;
+  text-align: center;
+}
+
+.site-header h1 {
+  font-size: 1.8rem;
+  color: var(--gold);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.site-header p {
+  color: var(--text-muted);
+  margin-top: 0.3rem;
+  font-size: 0.95rem;
+}
+
+/* === Layout === */
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* === Route Finder === */
+.route-finder {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.route-finder h2 {
+  color: var(--gold);
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.route-inputs {
+  display: flex;
+  gap: 0.5rem;
+  align-items: end;
+  flex-wrap: wrap;
+}
+
+.input-group {
+  flex: 1;
+  min-width: 200px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.3rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.input-group select {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid var(--card-border);
+  background: var(--dark);
+  color: var(--text);
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.input-group select:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.swap-btn {
+  background: var(--dark-light);
+  border: 1px solid var(--card-border);
+  color: var(--gold);
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.swap-btn:hover {
+  background: var(--gold);
+  color: var(--dark);
+}
+
+.route-options {
+  display: flex;
+  gap: 1.2rem;
+  margin: 1rem 0;
+  flex-wrap: wrap;
+}
+
+.route-options label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.route-options input[type="checkbox"] {
+  accent-color: var(--gold);
+  width: 16px;
+  height: 16px;
+}
+
+.find-btn {
+  background: linear-gradient(135deg, var(--gold) 0%, #d4a843 100%);
+  color: var(--dark);
+  border: none;
+  padding: 0.7rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.2s;
+  width: 100%;
+}
+
+.find-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(200, 168, 78, 0.3);
+}
+
+.find-btn:active {
+  transform: translateY(0);
+}
+
+/* === Route Results === */
+#route-results {
+  margin-top: 1rem;
+}
+
+.route-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.route-header h3 {
+  color: var(--gold);
+  font-size: 1.1rem;
+}
+
+.route-summary {
+  display: flex;
+  gap: 1rem;
+}
+
+.route-time {
+  background: var(--green);
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.route-steps {
+  background: var(--dark-light);
+  color: var(--text);
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+}
+
+.route-step {
+  display: flex;
+  gap: 1rem;
+  padding: 0.8rem;
+  margin-bottom: 0.5rem;
+  border-radius: 8px;
+  border-left: 4px solid var(--card-border);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.route-step.connection-indoor-walkway {
+  border-left-color: var(--indoor-color);
+}
+
+.route-step.connection-pedestrian-bridge {
+  border-left-color: var(--bridge-color);
+}
+
+.route-step.connection-free-tram {
+  border-left-color: var(--tram-color);
+}
+
+.route-step.connection-monorail {
+  border-left-color: var(--monorail-color);
+}
+
+.route-step.connection-sidewalk {
+  border-left-color: var(--sidewalk-color);
+}
+
+.step-number {
+  background: var(--dark-light);
+  color: var(--gold);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.step-details {
+  flex: 1;
+}
+
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.2rem;
+}
+
+.step-icon {
+  font-size: 1.1rem;
+}
+
+.step-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.step-time {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  margin-left: auto;
+}
+
+.step-from-to {
+  color: var(--gold-light);
+  font-size: 0.95rem;
+  margin-bottom: 0.2rem;
+}
+
+.step-description {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.step-cost {
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: 0.2rem;
+}
+
+.step-hours {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.route-legend {
+  margin-top: 1rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--card-border);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.legend-item {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  margin: 0.2rem 0.3rem;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.error {
+  color: var(--accent);
+  font-style: italic;
+}
+
+/* === Tabs === */
+.tabs {
+  margin-bottom: 1.5rem;
+}
+
+.tab-nav {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--card-border);
+  overflow-x: auto;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  padding: 0.8rem 1.2rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+
+.tab-btn:hover {
+  color: var(--text);
+}
+
+.tab-btn.active {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+}
+
+.tab-panel {
+  display: none;
+  padding: 1.2rem 0;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+/* === Strip Map === */
+.map-zone {
+  margin-bottom: 1.5rem;
+}
+
+.zone-label {
+  color: var(--gold);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--card-border);
+  margin-bottom: 0.8rem;
+}
+
+.map-hotel {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0.8rem;
+  margin-bottom: 0.3rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+  position: relative;
+}
+
+.map-hotel:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.map-hotel.west {
+  margin-right: 50%;
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.map-hotel.east {
+  margin-left: 50%;
+}
+
+.hotel-marker {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.west .hotel-marker {
+  flex-direction: row-reverse;
+}
+
+.hotel-name {
+  font-size: 0.9rem;
+}
+
+.hotel-side-badge {
+  background: var(--dark-light);
+  color: var(--text-muted);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.transit-badge {
+  background: var(--tram-color);
+  color: white;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.non-gaming .hotel-name {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Hotel popup */
+.hotel-details-popup {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 10%;
+  right: 10%;
+  z-index: 100;
+  background: var(--dark-mid);
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  min-width: 280px;
+}
+
+.map-hotel.active .hotel-details-popup {
+  display: block;
+}
+
+.hotel-details-popup h4 {
+  color: var(--gold);
+  margin-bottom: 0.5rem;
+}
+
+.hotel-details-popup p {
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
+}
+
+.hotel-meta {
+  color: var(--text-muted);
+  font-size: 0.8rem !important;
+}
+
+.hotel-connections,
+.hotel-transit {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.hotel-connections ul,
+.hotel-transit ul {
+  list-style: none;
+  padding-left: 0.5rem;
+}
+
+.hotel-connections li::before {
+  content: "\u2192 ";
+  color: var(--indoor-color);
+}
+
+.hotel-transit li::before {
+  content: "\u2192 ";
+  color: var(--tram-color);
+}
+
+/* Route highlight on map */
+.map-hotel.route-highlight {
+  background: rgba(200, 168, 78, 0.15);
+  border: 1px solid var(--gold);
+}
+
+.map-hotel.route-start .hotel-name::before {
+  content: "START: ";
+  color: var(--green);
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
+.map-hotel.route-end .hotel-name::before {
+  content: "END: ";
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
+/* === Transit Tab === */
+.transit-section {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.transit-section h3 {
+  color: var(--gold);
+  margin-bottom: 0.8rem;
+}
+
+.transit-meta {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 0.3rem;
+}
+
+.transit-stops ol {
+  padding-left: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.transit-stops li {
+  padding: 0.2rem 0;
+  font-size: 0.9rem;
+}
+
+.tram-card,
+.bridge-card {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 0.8rem;
+  border-left: 3px solid var(--tram-color);
+}
+
+.bridge-card {
+  border-left-color: var(--bridge-color);
+}
+
+.tram-card.closed {
+  opacity: 0.5;
+  border-left-color: var(--text-muted);
+}
+
+.tram-card h4,
+.bridge-card h4 {
+  color: var(--text);
+  margin-bottom: 0.4rem;
+  font-size: 0.95rem;
+}
+
+.tram-card p,
+.bridge-card p {
+  font-size: 0.85rem;
+  margin-bottom: 0.3rem;
+}
+
+.tram-note {
+  color: var(--accent);
+  font-style: italic;
+}
+
+/* === Tips Tab === */
+.tips-list {
+  list-style: none;
+  padding: 0;
+}
+
+.tips-list li {
+  padding: 0.8rem 1rem;
+  margin-bottom: 0.5rem;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.tips-list li::before {
+  content: "\u25B6 ";
+  color: var(--gold);
+}
+
+/* === Footer === */
+.site-footer {
+  text-align: center;
+  padding: 1.5rem 1rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  border-top: 1px solid var(--card-border);
+  margin-top: 2rem;
+}
+
+/* === Responsive === */
+@media (max-width: 600px) {
+  .site-header h1 {
+    font-size: 1.3rem;
+  }
+
+  .route-inputs {
+    flex-direction: column;
+  }
+
+  .input-group {
+    min-width: 100%;
+  }
+
+  .swap-btn {
+    align-self: center;
+    transform: rotate(90deg);
+  }
+
+  .route-options {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .map-hotel.west {
+    margin-right: 40%;
+  }
+
+  .map-hotel.east {
+    margin-left: 40%;
+  }
+
+  .hotel-details-popup {
+    left: 0;
+    right: 0;
+  }
+
+  .tab-btn {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.8rem;
+  }
+}
