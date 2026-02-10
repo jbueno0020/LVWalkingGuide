@@ -126,6 +126,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const label = StripPathfinder.connectionLabel(step.connection.type);
       const typeClass = step.connection.type.replace("_", "-");
 
+      const directionsHtml = step.connection.directions
+        ? `<ol class="step-directions">${step.connection.directions.map((d) => `<li>${d}</li>`).join("")}</ol>`
+        : "";
+
       html += `
         <div class="route-step connection-${typeClass}">
           <div class="step-number">${i + 1}</div>
@@ -137,6 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             <div class="step-from-to">${fromName} &rarr; ${toName}</div>
             <div class="step-description">${step.connection.description}</div>
+            ${directionsHtml}
             ${step.connection.cost ? `<div class="step-cost">Cost: $${step.connection.cost}</div>` : ""}
             ${step.connection.hours ? `<div class="step-hours">Hours: ${step.connection.hours}</div>` : ""}
           </div>
@@ -295,7 +300,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <ol reversed>
     `;
     for (const station of [...STRIP_DATA.monorail.stations].reverse()) {
-      html += `<li>${station.name}</li>`;
+      html += `<li><strong>${station.name}</strong>${station.boarding ? `<p class="boarding-info">${station.boarding}</p>` : ""}</li>`;
     }
     html += `
           </ol>
@@ -307,12 +312,21 @@ document.addEventListener("DOMContentLoaded", () => {
     html += '<div class="transit-section"><h3>\u{1F68B} Free Trams</h3>';
     for (const tram of STRIP_DATA.freeTrams) {
       const isClosed = tram.hours.includes("CLOSED");
+      let boardingHtml = "";
+      if (tram.boarding) {
+        boardingHtml = '<div class="boarding-details"><strong>Boarding Instructions:</strong><ul>';
+        for (const [stopId, instructions] of Object.entries(tram.boarding)) {
+          boardingHtml += `<li><strong>${pathfinder._hotelName(stopId)}:</strong> ${instructions}</li>`;
+        }
+        boardingHtml += "</ul></div>";
+      }
       html += `
         <div class="tram-card ${isClosed ? "closed" : ""}">
           <h4>${tram.name} ${isClosed ? "(CLOSED)" : ""}</h4>
           <p><strong>Hours:</strong> ${tram.hours}</p>
           <p><strong>Stops:</strong> ${tram.stops.map((s) => pathfinder._hotelName(s)).join(" \u2192 ")}</p>
           ${tram.note ? `<p class="tram-note">${tram.note}</p>` : ""}
+          ${boardingHtml}
         </div>
       `;
     }
@@ -326,9 +340,11 @@ document.addEventListener("DOMContentLoaded", () => {
       html += `
         <div class="bridge-card">
           <h4>${bridge.name}</h4>
+          <p><strong>Location:</strong> ${bridge.location}</p>
           <p><strong>Type:</strong> ${bridge.type === "four-corner" ? "Four-corner intersection" : "Direct bridge"}</p>
           <p><strong>Connects:</strong> ${bridge.connects.map((id) => pathfinder._hotelName(id)).join(", ")}</p>
           <p>${bridge.description}</p>
+          ${bridge.landmarks ? `<p class="bridge-landmarks"><strong>How to find it:</strong> ${bridge.landmarks}</p>` : ""}
         </div>
       `;
     }
