@@ -1,0 +1,19 @@
+{
+  "name": "Las Vegas Strip Walking Guide",
+  "short_name": "Strip Guide",
+  "description": "Navigate the Las Vegas Strip on foot with optimal routes using indoor walkways, bridges, trams, and the monorail.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0d0d1a",
+  "theme_color": "#1a1a2e",
+  "orientation": "any",
+  "categories": ["travel", "navigation"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231a1a2e' width='100' height='100' rx='20'/><text y='65' x='50' text-anchor='middle' font-size='50'>🎰</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

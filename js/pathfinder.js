@@ -192,6 +192,91 @@ class StripPathfinder {
   }
 
   /**
+   * Find a multi-stop route through a list of waypoints.
+   * Returns an array of route segments and aggregate stats.
+   */
+  findMultiStopRoute(stops, options = {}) {
+    if (stops.length < 2) return null;
+
+    const segments = [];
+    let totalMinutes = 0;
+    let totalDistance = 0;
+
+    for (let i = 0; i < stops.length - 1; i++) {
+      const route = this.findRoute(stops[i], stops[i + 1], options);
+      if (!route) return null;
+      route.distance = this._estimateDistance(route);
+      segments.push(route);
+      totalMinutes += route.totalMinutes;
+      totalDistance += route.distance;
+    }
+
+    return {
+      stops,
+      segments,
+      totalMinutes,
+      totalDistance,
+      totalSteps: segments.reduce((sum, s) => sum + s.steps.length, 0),
+    };
+  }
+
+  /**
+   * Estimate walking distance in miles for a route.
+   * Uses GPS coordinates when available, otherwise estimates from walk time.
+   * Average walking speed: ~3 mph (~0.05 miles per minute).
+   */
+  _estimateDistance(route) {
+    let totalMiles = 0;
+    for (const step of route.steps) {
+      const fromHotel = this.data.hotels.find((h) => h.id === step.from);
+      const toHotel = this.data.hotels.find((h) => h.id === step.to);
+
+      if (fromHotel?.lat && toHotel?.lat) {
+        totalMiles += StripPathfinder._haversine(
+          fromHotel.lat, fromHotel.lng, toHotel.lat, toHotel.lng
+        );
+      } else {
+        totalMiles += step.connection.walkMinutes * 0.05;
+      }
+    }
+    return totalMiles;
+  }
+
+  /**
+   * Haversine formula to calculate distance between two GPS points in miles.
+   */
+  static _haversine(lat1, lon1, lat2, lon2) {
+    const R = 3958.8; // Earth radius in miles
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  /**
+   * Find the nearest hotel to a given GPS coordinate.
+   */
+  findNearestHotel(lat, lng) {
+    let closest = null;
+    let minDist = Infinity;
+
+    for (const hotel of this.data.hotels) {
+      if (!hotel.lat || !hotel.lng) continue;
+      const dist = StripPathfinder._haversine(lat, lng, hotel.lat, hotel.lng);
+      if (dist < minDist) {
+        minDist = dist;
+        closest = hotel;
+      }
+    }
+
+    return closest ? { hotel: closest, distanceMiles: minDist } : null;
+  }
+
+  /**
    * Get a human-readable label for a connection type.
    */
   static connectionLabel(type) {
