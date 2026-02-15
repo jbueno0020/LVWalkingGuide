@@ -301,6 +301,89 @@ class StripMap {
     }
   }
 
+  /**
+   * Display a multi-stop route on the map with all segments.
+   */
+  showMultiStopRoute(multiRoute) {
+    this.clearRoute();
+    if (!multiRoute || multiRoute.segments.length === 0) return;
+
+    const allPoints = [];
+    let globalStepIndex = 0;
+
+    // Draw each segment
+    for (const segment of multiRoute.segments) {
+      segment.steps.forEach((step, index) => {
+        const fromHotel = this.data.hotels.find((h) => h.id === step.from);
+        const toHotel = this.data.hotels.find((h) => h.id === step.to);
+        if (!fromHotel?.lat || !toHotel?.lat) return;
+
+        const from = [fromHotel.lat, fromHotel.lng];
+        const to = [toHotel.lat, toHotel.lng];
+
+        if (globalStepIndex === 0) allPoints.push(from);
+        allPoints.push(to);
+
+        const outline = L.polyline([from, to], {
+          color: "#ffffff",
+          weight: 8,
+          opacity: 0.3,
+        }).addTo(this.map);
+        this.routeLines.push(outline);
+
+        const style = this._getConnectionLineStyle(step.connection.type);
+        const routeLine = L.polyline([from, to], {
+          color: style.color,
+          weight: 6,
+          opacity: 0.9,
+          dashArray: style.dashArray,
+        }).addTo(this.map);
+
+        const label = StripPathfinder.connectionLabel(step.connection.type);
+        routeLine.bindTooltip(
+          `Step ${globalStepIndex + 1}: ${label} (${step.connection.walkMinutes} min)`,
+          { sticky: true, className: "route-tooltip" }
+        );
+        this.routeLines.push(routeLine);
+
+        globalStepIndex++;
+      });
+    }
+
+    // Mark all waypoint stops
+    for (let i = 0; i < multiRoute.stops.length; i++) {
+      const hotel = this.data.hotels.find((h) => h.id === multiRoute.stops[i]);
+      if (!hotel?.lat) continue;
+
+      let labelText, className;
+      if (i === 0) {
+        labelText = "START";
+        className = "start-marker";
+      } else if (i === multiRoute.stops.length - 1) {
+        labelText = "END";
+        className = "end-marker";
+      } else {
+        labelText = `STOP ${i}`;
+        className = "waypoint-marker";
+      }
+
+      const marker = L.marker([hotel.lat, hotel.lng], {
+        icon: L.divIcon({
+          className: "route-endpoint-marker",
+          html: `<div class="endpoint ${className}">${labelText}</div>`,
+          iconSize: [60, 20],
+          iconAnchor: [30, 30],
+        }),
+      }).addTo(this.map);
+      this.routeMarkers.push(marker);
+    }
+
+    if (allPoints.length > 0) {
+      const bounds = L.latLngBounds(allPoints);
+      this.map.fitBounds(bounds, { padding: [60, 60], maxZoom: 16 });
+    }
+  }
+
   clearRoute() {
     for (const line of this.routeLines) {
       this.map.removeLayer(line);
